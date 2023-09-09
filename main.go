@@ -1,20 +1,33 @@
 package main
 
 import (
-	"net/http"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/Dillongc21/RealEstateApp.Backend/handler"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
-// This handler will match /user/john but will not match /user/ or /user
-func getUserByNameHandler(context *gin.Context) {
-	name := context.Param("name")
-	context.String(http.StatusOK, "Hello %s", name)
+func loadGoDotEnv() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Error loading environment variables file")
+	}
 }
 
 func main() {
+	loadGoDotEnv()
+
 	router := gin.Default()
 
-	router.GET("/user/:name", getUserByNameHandler)
+	router.GET("/addresses", handler.GetAddresses)
 
-	router.Run()
+	port := os.Getenv("PORT")
+	if (port == "") {
+		port = "8080"
+	}
+	runline := fmt.Sprintf("localhost:%s", port)
+	router.Run(runline)
 }
