@@ -22,8 +22,13 @@ func main() {
 
 	router := gin.Default()
 
-	router.GET("/addresses", handler.GetAddresses)
-	router.POST("/addresses", handler.PostAddress)
+	addresses := router.Group("/addresses")
+	{
+		addresses.GET("/", handler.GetAddresses)
+		addresses.GET("/:id", handler.GetAddressById)
+		addresses.POST("/", handler.PostAddress)
+		addresses.PATCH("/:id/line1", handler.PatchAddressLine1)
+	}
 
 	port := os.Getenv("PORT")
 	if (port == "") {
